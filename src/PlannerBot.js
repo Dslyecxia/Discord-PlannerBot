@@ -35,13 +35,27 @@ class PlannerBot extends Discord.Client {
 
   handle(message) {
     const [command, ...input] = message.content.split(' ');
+    
+    /* So, here are a few references:
+    
+    message.channel.send() : Sends to the channel the value of .send()
+    message.author.send() : Sends to the author the value of .send()
+    message.reply() : Replies with `@User, [value of .reply()]`
+    
+    */
+
     switch (command) {
       case 'commands':
         // Will respond with the list of commands in a PRIVATE MESSAGE.
         message.author.send(Util.getListOfCommands());
         break;
+      case 'test_channel_send':
+        // Will respond with the list of commands in the CHANNEL.
+        message.channel.send(Util.getListOfCommands());
+        break;
       default:
-        // ToDo: Unhandled Command I guess?
+        // Will directly reply within the channel to the user.
+        message.reply("Please enter a valid command.");
         break;
     }
   }

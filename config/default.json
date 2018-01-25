@@ -1,0 +1,6 @@
+{
+  "client_id": "CLIENTID",
+  "token": "CLIENTSECRET",
+  "prefix": "p!",
+  "deleteMessages": false
+}

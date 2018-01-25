@@ -33,6 +33,5 @@ Have a fast reliable "Party Maker" for events where as the Event Organizer, you 
 
 - As a Developer, I want to be a Cool Dood
 
-### Things to Use
-- Discord API
-- Discord Bot Script
+### To Run
+Change the config/default.json file and then use run.bat (or use node start in terminal)

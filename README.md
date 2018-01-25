@@ -34,4 +34,11 @@ Have a fast reliable "Party Maker" for events where as the Event Organizer, you 
 - As a Developer, I want to be a Cool Dood
 
 ### To Run
-Change the config/default.json file and then use run.bat (or use node start in terminal)
+#### First Time Install
+In a terminal, run the following:
+> npm install
+
+#### Running the Bot
+In a terminal, run the following:
+> npm start
+or alternatively, click on run.bat

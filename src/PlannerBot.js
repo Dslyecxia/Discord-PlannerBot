@@ -34,7 +34,7 @@ class PlannerBot extends Discord.Client {
   }
 
   handle(message) {
-    const [command, ...input] = message.content.split(' ');
+    const [command, ...input] = message.content.split(' --');
     
     /* So, here are a few references:
     
@@ -49,9 +49,13 @@ class PlannerBot extends Discord.Client {
         // Will respond with the list of commands in a PRIVATE MESSAGE.
         message.author.send(Util.getListOfCommands());
         break;
-      case 'test_channel_send':
+      case 'who':
         // Will respond with the list of commands in the CHANNEL.
-        message.channel.send(Util.getListOfCommands());
+        message.channel.send("My name is **Buck** and I like to **have intercourse with other consenting adults**.");
+        break;
+      case 'plan':
+        // Will respond with the list of commands in the CHANNEL.
+        Util.planEvent(input, message.channel);
         break;
       default:
         // Will directly reply within the channel to the user.

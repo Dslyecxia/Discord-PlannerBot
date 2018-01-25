@@ -9,12 +9,6 @@ const adapter = new FileSync('db.json');
 class Util {
   constructor() {
     this.db = low(adapter);
-    this.usage = {
-      rename: 'Usage: !rename <old> <new>',
-      remove: 'Usage: !remove <sound>',
-      ignore: 'Usage: !ignore <user>',
-      unignore: 'Usage: !unignore'
-    };
   }
 
   avatarExists() {

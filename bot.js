@@ -1,5 +1,6 @@
 const config = require('config');
 const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 const PlannerBot = require('./src/PlannerBot.js');
 
 const adapter = new FileSync('db.json');

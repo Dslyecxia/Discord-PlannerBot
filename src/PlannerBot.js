@@ -24,7 +24,6 @@ class PlannerBot extends Discord.Client {
   _messageListener(message) {
     if (message.channel instanceof Discord.DMChannel) return; // Abort when DM
     if (!message.content.startsWith(this.prefix)) return; // Abort when not prefix
-    if (Util.userIgnored(message.author.id)) return;
 
     message.content = message.content.substring(this.prefix.length);
     this.handle(message);
@@ -38,7 +37,7 @@ class PlannerBot extends Discord.Client {
     const [command, ...input] = message.content.split(' ');
     switch (command) {
       case 'commands':
-        // Will respond with @User and list of commands in a PRIVATE MESSAGE.
+        // Will respond with the list of commands in a PRIVATE MESSAGE.
         message.author.send(Util.getListOfCommands());
         break;
       default:

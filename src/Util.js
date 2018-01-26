@@ -30,7 +30,8 @@ class Util {
       ].join('\n'),
       MARKDOWN_ERROR: 'Error: Unable to create the Markdown Table. Data sent might be wrong encoding?',
       EVENT_NOT_FOUND: 'Error: Event not found!',
-      USER_ALREADY_REGISTERED: 'Error: You are already registered to this event!'
+      USER_ALREADY_REGISTERED: 'Error: You are already registered to this event!',
+      TOO_MANY_USERS: 'Error: The event is already full. Sorry :( !'
     };
 
     this.warning = {
@@ -69,7 +70,7 @@ class Util {
   planEvent(input, message) {
     // If the planned event doesn't contain at least a title, description and max members
     if (input.length < 3) {
-      channel.send(this.error.MISSING_PROPERTY);
+      message.author.send(this.error.MISSING_PROPERTY);
       return;
     }
 
@@ -95,7 +96,7 @@ class Util {
         this.db.get('events').find({id: eventData.id}).assign({postId: msg.id}).write();
       });
     } catch (error) {
-      message.channel.send(this.error.MARKDOWN_ERROR);
+      message.author.send(this.error.MARKDOWN_ERROR);
     }
   }
 
@@ -141,10 +142,10 @@ class Util {
         }).catch(console.error);
         message.author.send(this.warning.EVENT_REMOVED);
       } else {
-        message.channel.send(this.error.EVENT_NOT_FOUND);
+        message.author.send(this.error.EVENT_NOT_FOUND);
       }
     } else {
-      message.channel.send(this.error.MISSING_EVENT);
+      message.author.send(this.error.MISSING_EVENT);
     }
   }
 
@@ -159,15 +160,22 @@ class Util {
 
     if(eventData) {
       var isAlreadyRegistered = (this.db.get('users').find({ event: eventData.id, user: message.author.id}).value()) ? true : false;
+      var isAlreadyFull = (this.db.get('users').filter({ event: eventData.id}).size().value() >= eventData.max) ? true : false;
       var fieldLength = eventData.fields.length;
 
       if (userData.length < fieldLength + 1) {
-        message.channel.send(this.error.MISSING_PROPERTY_JOIN);
+        message.author.send(this.error.MISSING_PROPERTY_JOIN);
         return;
       }
 
       if (isAlreadyRegistered) {
-        message.channel.send(this.error.USER_ALREADY_REGISTERED);
+        message.author.send(this.error.USER_ALREADY_REGISTERED);
+        return;
+      }
+
+      if (isAlreadyFull) {
+        message.author.send(this.error.TOO_MANY_USERS);
+        this.reloadEvent(eventData, message);
         return;
       }
 
@@ -182,7 +190,7 @@ class Util {
       this.reloadEvent(eventData, message);
 
     } else {
-      message.channel.send(this.error.EVENT_NOT_FOUND);
+      message.author.send(this.error.EVENT_NOT_FOUND);
     }
   }
 
@@ -194,10 +202,10 @@ class Util {
         this.reloadEvent(eventData, message);
         message.author.send(this.warning.LEFT_EVENT);
       } else {
-        message.channel.send(this.error.EVENT_NOT_FOUND);
+        message.author.send(this.error.EVENT_NOT_FOUND);
       }
     } else {
-      message.channel.send(this.error.MISSING_EVENT);
+      message.author.send(this.error.MISSING_EVENT);
     }
   }
 

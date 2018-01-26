@@ -36,7 +36,8 @@ class Util {
 
     this.warning = {
       EVENT_REMOVED: 'Event has been removed!',
-      LEFT_EVENT: 'You have left the event!'
+      LEFT_EVENT: 'You have left the event!',
+      KICK_EVENT: 'User was kicked from event!'
     };
   }
 
@@ -49,18 +50,40 @@ class Util {
       '```',
       `Use the prefix "${config.get('prefix')}" with the following commands:`,
       '',
-      'commands              Show this message',
-      'who                   Ask the bot who he is and what he do',
-      'plan                  Plan an event, including the Title, the Description, the amount of Members and Custom Fields',
-      `                      Ex: ${config.get('prefix')}plan --Title of Event --Description of Event --10 --Custom Field 1 --Custom Field 2`,
+      'commands              Send a private message to yourself containing these commands',
+      '',
+      'plan                  Plan an event, including the Title, the Description, the amount of Members',
+      '                      and OPTIONAL Custom Fields',
+      `                      Ex: ${config.get('prefix')}plan --Title of Event --Description of Event`,
+      '                          --10 --Custom Field 1 --Custom Field 2',
+      '',
       'close                 Close an event using an event ID',
       `                      Ex: ${config.get('prefix')}close --12345678`,
-      'join                  Join an event using an event ID',
-      `                      Ex: ${config.get('prefix')}join --12345678`,
+      '',
+      'join                  Join an event using an event ID and the optional fields',
+      `                      Ex: ${config.get('prefix')}join --12345678 --Custom Field Answer 1 `,
+      '                      --Custom Field Answer 2',
+      '',
       'leave                 Leave an event',
       `                      Ex: ${config.get('prefix')}leave --12345678`,
+      '',
+      'kick                  Kick a user from an event you hosted using the member name',
+      `                      Ex: ${config.get('prefix')}kick --12345678 --Dslyecxia`,
+      ' ',
       '```'
     ].join('\n');
+  }
+
+  helloWorld(message) {
+    var sayHi = [
+      '**Welcome to the Event Planning Channel**',
+      'This bot was made by `https://twitter.com/Dslyecxia`',
+      'To view the command list, use the following command: `' + config.get('prefix') + 'commands`',
+      'Messages here **SHOULD** get deleted automatically by the bot once processed if they are commands. I recommend keeping the channel clear of any other messages.',
+      ' '
+    ].join('\n');
+
+    message.channel.send(sayHi);
   }
 
   deleteUserMessage(message){
@@ -196,11 +219,31 @@ class Util {
 
   leaveEvent(eventId, message) {
     if(eventId[0]){
-      if(this.db.get('users').find({ user: message.author.id, event: eventId[0] }).size()){
+      if(this.db.get('users').find({ user: message.author.id, event: eventId[0] }).size().value()){
         this.db.get('users').remove({ user: message.author.id, event: eventId[0] }).write();
         var eventData = this.db.get('events').find({ id: eventId[0] }).value();
         this.reloadEvent(eventData, message);
         message.author.send(this.warning.LEFT_EVENT);
+      } else {
+        message.author.send(this.error.EVENT_NOT_FOUND);
+      }
+    } else {
+      message.author.send(this.error.MISSING_EVENT);
+    }
+  }
+
+  kickFromEvent(eventId, message) {
+    if(eventId[0] && eventId[1]){
+      var eventID = eventId[0];
+      var target = eventId[1];
+      var messageAuthor = message.author.id;
+      var eventExists = this.db.get('events').find({ authorId: messageAuthor, id: eventID }).size().value();
+
+      if(eventExists){
+        this.db.get('users').remove({ username: target, event: eventID }).write();
+        var eventData = this.db.get('events').find({ id: eventID }).value();
+        this.reloadEvent(eventData, message);
+        message.author.send(this.warning.KICK_EVENT);
       } else {
         message.author.send(this.error.EVENT_NOT_FOUND);
       }
@@ -226,17 +269,20 @@ class Util {
     var seperator = [];
     var dataSet = [];
     var colWidth = this.determineColWidth(eventData, message);
+    var stringifiedFields = "";
 
     // Title Row
     var i = 0;
-    var colExtraFields = eventData.extrafields.length;
+    var colExtraFields = eventData.extrafields;
+    var colExtraFieldsLength = colExtraFields.length;
 
     titleRow += "| Members" + this.addSpaces(colWidth[0]-7) + " ";
 
-    while(i < colExtraFields){
+    while(i < colExtraFieldsLength){
       var title = eventData.extrafields[i];
       var spaces = colWidth[i+1] - title.length;
       titleRow += "| " + title + this.addSpaces(spaces) + " ";
+      stringifiedFields += ` --<Your "` + colExtraFields[i] + `" Answer>`;
       i++;
     }
 
@@ -304,16 +350,17 @@ class Util {
 
     // Generate the whole Message
     var markdownTable =  [
+      "~~                                  ~~",
       "**" + eventData.title + "**",
       eventData.description,
       "**Max amount of members is: **" + eventData.max,
-      "",
+      " ",
       '```',
       titleRow,
       seperator,
       dataSet,
       '```',
-      'To join this specific event, please join this specific ID: `' + eventData.id + '`',
+      '**To join this specific event, please join this specific ID:** `' + config.get('prefix') + 'join --' + eventData.id + stringifiedFields + '`',
 
     ].join('\n');
 

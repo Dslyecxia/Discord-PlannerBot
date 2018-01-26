@@ -19,19 +19,20 @@ Have a fast reliable "Party Maker" for events where as the Event Organizer, you 
 
 ~~- As the Organizer, I want to be able to plan an event by inputting a **Title**, **Description**, **Date**, **Max Number of Members** and **Addition Custom Fields** as a command on Discord.~~
 ~~- As the Organizer, I want to be able to remove an event by inputting a command on discord.~~
-- As the Organizer, I want to be able to remove a member from an event by inputting a command on discord
+~~- As the Organizer, I want to be able to remove a member from an event by inputting a command on discord~~
 - As the Organizer, I want to be able to change the date for an event by inputting a command on discord
 
 ---
 
 ~~- As a Member, I want to be able to join an event in a channel by using a command~~
 > Eg. !join <eventID> <Custom Field 1> <Custom Field 2>
+  
 ~~- As a Member, I want to be able to remove myself from an event in a channel by using a command~~
 > Eg. !leave <eventID>
 
 ---
 
-- As a Developer, I want to be a Cool Dood
+~~- As a Developer, I want to be a Cool Dood~~
 
 ### To Run
 #### First Time Install

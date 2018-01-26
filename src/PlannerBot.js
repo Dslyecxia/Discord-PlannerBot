@@ -48,18 +48,33 @@ class PlannerBot extends Discord.Client {
       case 'commands':
         // Will respond with the list of commands in a PRIVATE MESSAGE.
         message.author.send(Util.getListOfCommands());
+        Util.deleteUserMessage(message);
         break;
       case 'who':
         // Will respond with the list of commands in the CHANNEL.
-        message.channel.send("My name is **Buck** and I like to **have intercourse with other consenting adults**.");
+        message.channel.send("I like things to be neat. Made by Nick.");
+        Util.deleteUserMessage(message);
         break;
       case 'plan':
-        // Will respond with the list of commands in the CHANNEL.
-        Util.planEvent(input, message.channel);
+        Util.planEvent(input, message);
+        Util.deleteUserMessage(message);
+        break;
+      case 'close':
+        Util.closeEvent(input, message);
+        Util.deleteUserMessage(message);
+        break;
+      case 'join':
+        Util.joinEvent(input, message);
+        Util.deleteUserMessage(message);
+        break;
+      case 'leave':
+        Util.leaveEvent(input, message);
+        Util.deleteUserMessage(message);
         break;
       default:
         // Will directly reply within the channel to the user.
         message.reply("Please enter a valid command.");
+        Util.deleteUserMessage(message);
         break;
     }
   }

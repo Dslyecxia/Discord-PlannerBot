@@ -1,4 +1,2 @@
 node_modules
-config/default.json
 db.json
-config/*.png
